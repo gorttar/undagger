@@ -1,4 +1,4 @@
-package atm.commands
+package undagger.atm.commands
 
 import atm.CommandRouter
 import java.util.Optional
@@ -6,7 +6,6 @@ import java.util.Optional
 
 /** Logic to process some user input.  */
 interface Command {
-
     /** Process the rest of the command's words and do something.  */
     fun handleInput(input: List<String>): Result
 
@@ -28,6 +27,7 @@ interface Command {
             fun handled(): Result = Result(Status.HANDLED, Optional.empty())
             fun enterNestedCommandSet(nestedCommandRouter: CommandRouter): Result =
                 Result(Status.HANDLED, Optional.of(nestedCommandRouter))
+
             fun inputCompleted(): Result = Result(Status.INPUT_COMPLETED, Optional.empty())
         }
     }

@@ -1,10 +1,15 @@
-package atm
+package undagger.atm
 
-import atm.commands.Command
-import atm.commands.Command.Result.Companion.invalid
-import javax.inject.Inject
+import undagger.atm.commands.Command
+import undagger.atm.commands.Command.Result.Companion.invalid
 
-class CommandRouter @Inject constructor(private val commands: Map<String, @JvmSuppressWildcards Command>) {
+interface CommandRouterDependency {
+    val commands: Map<String, Command>
+}
+
+class CommandRouter(dependency: CommandRouterDependency) {
+    private val commands: Map<String, Command> = dependency.commands
+
     fun route(input: String): Command.Result {
         val splitInput = split(input)
         if (splitInput.isEmpty()) {
