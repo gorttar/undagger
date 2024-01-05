@@ -1,5 +1,6 @@
 package undagger.atm
 
+import undagger.atm.di.components.CommandRouterFactory
 import java.util.Scanner
 
 internal object CommandLineAtm {
@@ -8,7 +9,7 @@ internal object CommandLineAtm {
         val scanner = Scanner(System.`in`)
         val commandRouter = CommandRouterFactory.router
         while (scanner.hasNextLine()) {
-            val unused = commandRouter.route(scanner.nextLine()).status()
+            @Suppress("UNUSED_VARIABLE") val unused = commandRouter.route(scanner.nextLine()).status()
         }
     }
 }

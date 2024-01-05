@@ -1,4 +1,4 @@
-package undagger.di
+package undagger.atm.di.utils
 
 /**
  * [T] - bean type

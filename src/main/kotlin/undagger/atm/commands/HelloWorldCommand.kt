@@ -1,11 +1,11 @@
 package undagger.atm.commands
 
-import undagger.atm.modules.OutputterRequirement
+import undagger.atm.di.exports.OutputterExport
 
-interface HelloWorldCommandDependency : OutputterRequirement
+interface HelloWorldCommandImport : OutputterExport
 
-class HelloWorldCommand(dependency: HelloWorldCommandDependency) : Command {
-    private val outputter = dependency.outputter
+class HelloWorldCommand(import: HelloWorldCommandImport) : Command {
+    private val outputter = import.outputter
 
     override fun handleInput(input: List<String>): Command.Result {
         if (input.isNotEmpty()) {

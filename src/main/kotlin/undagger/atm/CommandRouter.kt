@@ -3,11 +3,11 @@ package undagger.atm
 import undagger.atm.commands.Command
 import undagger.atm.commands.Command.Result.Companion.invalid
 
-interface CommandRouterDependency {
+interface CommandRouterImport {
     val commands: Map<String, Command>
 }
 
-class CommandRouter(dependency: CommandRouterDependency) {
+class CommandRouter(dependency: CommandRouterImport) {
     private val commands: Map<String, Command> = dependency.commands
 
     fun route(input: String): Command.Result {

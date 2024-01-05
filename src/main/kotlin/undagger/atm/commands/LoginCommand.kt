@@ -1,12 +1,12 @@
 package undagger.atm.commands
 
 import undagger.atm.commands.Command.Result.Companion.handled
-import undagger.atm.modules.OutputterRequirement
+import undagger.atm.di.exports.OutputterExport
 
-interface LoginCommandDependency : OutputterRequirement
+interface LoginCommandImport : OutputterExport
 
-class LoginCommand(dependency: LoginCommandDependency) : SingleArgCommand() {
-    private val outputter = dependency.outputter
+class LoginCommand(import: LoginCommandImport) : SingleArgCommand() {
+    private val outputter = import.outputter
 
     public override fun handleArg(arg: String): Command.Result {
         val username = arg
