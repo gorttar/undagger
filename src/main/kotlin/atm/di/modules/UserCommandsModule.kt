@@ -1,4 +1,4 @@
-package atm.modules
+package atm.di.modules
 
 import atm.commands.Command
 import atm.commands.DepositCommand

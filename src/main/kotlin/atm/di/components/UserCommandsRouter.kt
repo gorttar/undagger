@@ -1,8 +1,9 @@
-package atm
+package atm.di.components
 
+import atm.CommandRouter
 import atm.data.Database.Account
-import atm.modules.PerSession
-import atm.modules.UserCommandsModule
+import atm.di.modules.PerSession
+import atm.di.modules.UserCommandsModule
 import dagger.BindsInstance
 import dagger.Module
 import dagger.Subcomponent

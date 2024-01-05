@@ -1,7 +1,7 @@
 package atm
 
-import atm.modules.MaximumWithdrawal
-import atm.modules.PerSession
+import atm.di.modules.MaximumWithdrawal
+import atm.di.modules.PerSession
 import java.math.BigDecimal
 import javax.inject.Inject
 

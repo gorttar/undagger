@@ -1,9 +1,10 @@
-package atm
+package atm.di.components
 
-import atm.modules.AmountsModule
-import atm.modules.HelloWorldModule
-import atm.modules.LoginCommandModule
-import atm.modules.SystemOutModule
+import atm.CommandProcessor
+import atm.di.modules.AmountsModule
+import atm.di.modules.HelloWorldModule
+import atm.di.modules.LoginCommandModule
+import atm.di.modules.SystemOutModule
 import dagger.Component
 import javax.inject.Singleton
 

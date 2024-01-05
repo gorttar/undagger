@@ -1,9 +1,9 @@
 package atm.commands
 
-import atm.UserCommandsRouter
 import atm.commands.Command.Result
 import atm.data.Database
 import atm.data.Database.Account
+import atm.di.components.UserCommandsRouter
 import atm.io.Outputter
 import java.util.Optional
 import javax.inject.Inject

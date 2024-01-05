@@ -1,7 +1,9 @@
 package atm
 
 import atm.commands.Command
-import java.util.*
+import atm.di.components.CommandProcessorFactory
+import atm.di.components.DaggerCommandProcessorFactory
+import java.util.Scanner
 
 internal object CommandLineAtm {
     @JvmStatic
@@ -10,7 +12,7 @@ internal object CommandLineAtm {
         val commandProcessorFactory: CommandProcessorFactory = DaggerCommandProcessorFactory.create()
         val commandProcessor: CommandProcessor = commandProcessorFactory.commandProcessor()
         while (scanner.hasNextLine()) {
-            val unused: Command.Status = commandProcessor.process(scanner.nextLine())
+            @Suppress("UNUSED_VARIABLE") val unused: Command.Status = commandProcessor.process(scanner.nextLine())
         }
     }
 }
