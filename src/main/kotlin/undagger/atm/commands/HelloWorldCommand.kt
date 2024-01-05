@@ -5,7 +5,7 @@ import undagger.atm.di.exports.OutputterExport
 interface HelloWorldCommandImport : OutputterExport
 
 class HelloWorldCommand(import: HelloWorldCommandImport) : Command {
-    private val outputter = import.outputter
+    private val outputter by import::outputter
 
     override fun handleInput(input: List<String>): Command.Result {
         if (input.isNotEmpty()) {

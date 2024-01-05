@@ -2,8 +2,8 @@ package undagger.atm.di.modules
 
 import undagger.atm.commands.LoginCommand
 import undagger.atm.commands.LoginCommandImport
-import undagger.atm.di.utils.new
+import undagger.atm.di.utils.perRequest
 
-class LoginCommandModule(private val dependency: LoginCommandImport) {
-    val command get() = dependency.new(::LoginCommand)
+class LoginCommandModule(import: LoginCommandImport) {
+    val command by import.perRequest(::LoginCommand)
 }

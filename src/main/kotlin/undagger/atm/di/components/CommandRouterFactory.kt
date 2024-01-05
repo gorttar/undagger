@@ -10,6 +10,7 @@ import undagger.atm.di.modules.HelloWorldModule
 import undagger.atm.di.modules.LoginCommandModule
 import undagger.atm.di.modules.SystemOutModule
 import undagger.atm.di.utils.new
+import undagger.atm.di.utils.perRequest
 
 object CommandRouterFactory :
     OutputterExport by SystemOutModule,
@@ -17,10 +18,11 @@ object CommandRouterFactory :
     LoginCommandImport,
     CommandRouterImport {
 
-    val router: CommandRouter get() = new(::CommandRouter)
-    override val commands: Map<String, Command>
-        get() = mapOf(
+    val router: CommandRouter by perRequest(::CommandRouter)
+    override val commands: Map<String, Command> by perRequest {
+        mapOf(
             "hello" to new(::HelloWorldModule).command,
             "login" to new(::LoginCommandModule).command
         )
+    }
 }

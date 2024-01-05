@@ -7,8 +7,8 @@ interface CommandRouterImport {
     val commands: Map<String, Command>
 }
 
-class CommandRouter(dependency: CommandRouterImport) {
-    private val commands: Map<String, Command> = dependency.commands
+class CommandRouter(import: CommandRouterImport) {
+    private val commands: Map<String, Command> by import::commands
 
     fun route(input: String): Command.Result {
         val splitInput = split(input)
