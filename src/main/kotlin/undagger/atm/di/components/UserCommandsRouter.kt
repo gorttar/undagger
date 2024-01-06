@@ -4,28 +4,19 @@ import undagger.atm.CommandRouter
 import undagger.atm.CommandRouterImport
 import undagger.atm.commands.Command
 import undagger.atm.commands.DepositCommand
-import undagger.atm.data.Database
-import undagger.atm.di.exports.OutputterExport
+import undagger.atm.commands.DepositCommandImport
 import undagger.atm.di.utils.new
 import undagger.atm.di.utils.perComponent
-import undagger.atm.io.Outputter
+
+// can't make it inner interface of UserCommandsRouter: https://youtrack.jetbrains.com/issue/KT-17455/
+interface UserCommandsRouterImport : DepositCommandImport, CommandRouterImport
 
 //@PerSession
 //@Subcomponent(modules = [UserCommandsModule::class])
-class UserCommandsRouter(import: Import) : //todo naming
-    DepositCommand.Import,
-    CommandRouterImport
+class UserCommandsRouter(import: UserCommandsRouterImport) : //todo naming; does NOT inherit CommandRouter
+    UserCommandsRouterImport by import
 {
-    interface Import : OutputterExport, CommandRouterImport {
-        val account: Database.Account
-    }
 
-    fun interface Factory {
-        fun create(account: Database.Account): UserCommandsRouter
-    }
-
-    override val account: Database.Account by import::account
-    override val outputter: Outputter by import::outputter
     val router: CommandRouter by perComponent(::CommandRouter)
     override val commands: Map<String, Command> by perComponent {
         import.commands + mapOf(

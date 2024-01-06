@@ -5,13 +5,13 @@ import undagger.atm.di.exports.OutputterExport
 import undagger.atm.io.Outputter
 import java.math.BigDecimal
 
-class DepositCommand(
-    import: Import,
-) : BigDecimalCommand(import.outputter) {
-    interface Import : OutputterExport {
-        val account: Account
-    }
+interface DepositCommandImport : OutputterExport {
+    val account: Account
+}
 
+class DepositCommand(
+    import: DepositCommandImport,
+) : BigDecimalCommand(import.outputter) {
     private val account: Account by import::account
     private val outputter: Outputter by import::outputter
 

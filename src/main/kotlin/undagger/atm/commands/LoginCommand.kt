@@ -7,20 +7,17 @@ import undagger.atm.di.exports.OutputterExport
 
 interface LoginCommandImport : OutputterExport {
     val database: Database
-    val userCommandRouterFactory: UserCommandsRouter.Factory
+    fun userCommandRouter(account: Database.Account): UserCommandsRouter
 }
 
-class LoginCommand(import: LoginCommandImport) : SingleArgCommand() {
-    private val outputter by import::outputter
-    private val database by import::database
-    private val userCommandRouterFactory by import::userCommandRouterFactory
+class LoginCommand(private val import: LoginCommandImport) : SingleArgCommand() {
 
-    public override fun handleArg(arg: String): Command.Result {
+    public override fun handleArg(arg: String): Command.Result = with(import) {
         val username = arg
         val account = database.getAccount(username)
         outputter.output("$username is logged in with balance: ${account.balance}")
         return enterNestedCommandSet(
-            userCommandRouterFactory.create(account).router
+            userCommandRouter(account).router
         )
     }
 }
