@@ -15,8 +15,8 @@ inline fun <T, D> D.perRequest(crossinline constructor: (D) -> T): ReadOnlyPrope
     ReadOnlyProperty { _, _ -> new(constructor) }
 
 /**
- * Create [scoped] delegate for bean of type [T] using its [constructor] and [this] bean import of type [D]
+ * Create [perComponent] delegate for bean of type [T] using its [constructor] and [this] bean import of type [D]
  * Created delegate invokes [constructor] once during first invocation of its [ReadOnlyProperty.getValue]
  */
-inline fun <T, D> D.scoped(crossinline constructor: (D) -> T): ReadOnlyProperty<Any?, T> =
+inline fun <T, D> D.perComponent(crossinline constructor: (D) -> T): ReadOnlyProperty<Any?, T> =
     ReadOnlyProperty(lazy { new(constructor) }::getValue)

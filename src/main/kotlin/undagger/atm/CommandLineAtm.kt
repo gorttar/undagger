@@ -1,15 +1,15 @@
 package undagger.atm
 
-import undagger.atm.di.components.CommandRouterFactory
-import java.util.Scanner
+import undagger.atm.di.components.CommandProcessorFactory
+import java.util.*
 
 internal object CommandLineAtm {
     @JvmStatic
     fun main(args: Array<String>) {
         val scanner = Scanner(System.`in`)
-        val commandRouter = CommandRouterFactory.router
+        val processor = CommandProcessorFactory.processor
         while (scanner.hasNextLine()) {
-            @Suppress("UNUSED_VARIABLE") val unused = commandRouter.route(scanner.nextLine()).status()
+            @Suppress("UNUSED_VARIABLE") val unused = processor.process(scanner.nextLine())
         }
     }
 }

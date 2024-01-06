@@ -1,7 +1,7 @@
 package undagger.atm.commands
 
-import atm.CommandRouter
-import java.util.Optional
+import undagger.atm.CommandRouter
+import java.util.*
 
 
 /** Logic to process some user input.  */
@@ -21,7 +21,6 @@ interface Command {
 
         fun nestedCommandRouter(): Optional<CommandRouter> = nestedCommandRouter
 
-
         companion object {
             fun invalid(): Result = Result(Status.INVALID, Optional.empty())
             fun handled(): Result = Result(Status.HANDLED, Optional.empty())
@@ -34,4 +33,3 @@ interface Command {
 
     enum class Status { INVALID, HANDLED, INPUT_COMPLETED }
 }
-
