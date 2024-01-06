@@ -18,8 +18,7 @@ interface UserCommandsRouterImport : UserCommandImport, CommandRouterImport
 //@Subcomponent(modules = [UserCommandsModule::class])
 class UserCommandsRouter(import: UserCommandsRouterImport) : //todo naming; does NOT inherit CommandRouter
     UserCommandsRouterImport by import,
-    WithdrawCommandImport
-{
+    WithdrawCommandImport {
 
     val router: CommandRouter by perComponent(::CommandRouter)
     override val commands: Map<String, Command> by perComponent {

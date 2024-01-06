@@ -5,9 +5,7 @@ import java.math.BigDecimal
 
 interface WithdrawCommandImport : UserCommandImport, LimitsExport
 
-class WithdrawCommand(
-    private val import: WithdrawCommandImport,
-) : BigDecimalCommand(import.outputter) {
+class WithdrawCommand(private val import: WithdrawCommandImport) : BigDecimalCommand(import) {
     public override fun handleAmount(amount: BigDecimal) = with(import) {
         when {
             amount > maximumWithdrawal -> outputter.output("You are too greedy!")
