@@ -1,7 +1,6 @@
 package undagger.atm.di.utils
 
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * Create [new] [Bean] using its [constructor] and [this] [Import]
@@ -23,35 +22,39 @@ inline fun <Bean> new(constructor: () -> Bean): Bean = constructor()
  * @param V the type of the property value.
  * @see ReadOnlyProperty
  */
-fun interface OwnerlessReadOnlyProperty<V> : ReadOnlyProperty<Any?, V> {
-    operator fun invoke(): V
-    override fun getValue(thisRef: Any?, property: KProperty<*>): V = this()
-}
+typealias OwnerlessReadOnlyProperty<V> = ReadOnlyProperty<Any?, V>
+
+inline fun <V> OwnerlessReadOnlyProperty(crossinline block: () -> V): OwnerlessReadOnlyProperty<V> =
+    OwnerlessReadOnlyProperty { _, _ -> block() }
 
 /**
  * Create [perRequest] delegate for [Bean] using its [constructor] and [this] [Import]
  * Created delegate invokes [constructor] for each invocation of its [ReadOnlyProperty.getValue]
  */
-inline fun <Import, Bean> Import.perRequest(crossinline constructor: Import.() -> Bean): OwnerlessReadOnlyProperty<Bean> =
-    OwnerlessReadOnlyProperty { constructor() }
+inline fun <Import, Bean> Import.perRequest(
+    crossinline constructor: Import.() -> Bean
+): OwnerlessReadOnlyProperty<Bean> = OwnerlessReadOnlyProperty { constructor() }
 
 /**
  * Create [perRequest] delegate for independent [Bean] using its [constructor]
  * Created delegate invokes [constructor] for each invocation of its [ReadOnlyProperty.getValue]
  */
-inline fun <Bean> perRequest(crossinline constructor: () -> Bean): OwnerlessReadOnlyProperty<Bean> =
-    Unit.perRequest { constructor() }
+inline fun <Bean> perRequest(
+    crossinline constructor: () -> Bean
+): OwnerlessReadOnlyProperty<Bean> = Unit.perRequest { constructor() }
 
 /**
  * Create [perComponent] delegate [Bean] using its [constructor] and [this] [Import]
  * Created delegate invokes [constructor] once during first invocation of its [ReadOnlyProperty.getValue]
  */
-inline fun <Import, Bean> Import.perComponent(crossinline constructor: Import.() -> Bean): OwnerlessReadOnlyProperty<Bean> =
-    OwnerlessReadOnlyProperty(lazy { constructor() }::value)
+inline fun <Import, Bean> Import.perComponent(
+    crossinline constructor: Import.() -> Bean
+): OwnerlessReadOnlyProperty<Bean> = OwnerlessReadOnlyProperty(lazy { constructor() }::value)
 
 /**
  * Create [perComponent] delegate for independent [Bean] using its [constructor]
  * Created delegate invokes [constructor] once during first invocation of its [ReadOnlyProperty.getValue]
  */
-inline fun <Bean> perComponent(crossinline constructor: () -> Bean): OwnerlessReadOnlyProperty<Bean> =
-    Unit.perComponent { constructor() }
+inline fun <Bean> perComponent(
+    crossinline constructor: () -> Bean
+): OwnerlessReadOnlyProperty<Bean> = Unit.perComponent { constructor() }
