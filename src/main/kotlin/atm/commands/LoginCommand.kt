@@ -1,33 +1,23 @@
 package atm.commands
 
 import atm.commands.Command.Result
-import atm.data.Database
 import atm.data.Database.Account
 import atm.di.components.UserCommandsRouter
-import atm.io.Outputter
-import java.util.Optional
-import javax.inject.Inject
-import kotlin.jvm.optionals.getOrNull
+import atm.di.exports.AccountExport
+import atm.di.exports.DatabaseExport
+import atm.di.exports.OutputterExport
 
+interface LoginCommandImport : OutputterExport, AccountExport, DatabaseExport {
+    fun userCommandRouter(account: Account): UserCommandsRouter
+}
 
-class LoginCommand @Inject constructor(
-    private val database: Database,
-    private val outputter: Outputter,
-    private val userCommandsRouterFactory: UserCommandsRouter.Factory,
-    account: Optional<Account>
-) : SingleArgCommand() {
-    private val account = account.getOrNull()
+class LoginCommand(private val import: LoginCommandImport) : SingleArgCommand() {
+    public override fun handleArg(arg: String): Result = import.handleArg(arg)
 
-    init {
-        println("Creating a new $this")
-    }
-
-    public override fun handleArg(arg: String): Result = account?.let { Result.handled() } ?: run {
+    private fun LoginCommandImport.handleArg(arg: String): Result = account?.let { Result.handled() } ?: run {
         val username = arg
         val account = database.getAccount(username)
-        outputter.output(
-            "$username is logged in with balance: ${account.balance()}"
-        )
-        Result.enterNestedCommandSet(userCommandsRouterFactory.create(account).router())
+        outputter.output("$username is logged in with balance: ${account.balance}")
+        Result.enterNestedCommandSet(userCommandRouter(account).router)
     }
 }

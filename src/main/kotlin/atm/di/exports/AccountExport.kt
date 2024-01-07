@@ -1,6 +1,6 @@
-package undagger.atm.di.exports
+package atm.di.exports
 
-import undagger.atm.data.Database
+import atm.data.Database
 
 interface AccountExport {
     val account: Database.Account? get() = null

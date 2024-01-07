@@ -1,28 +1,24 @@
 package atm
 
-import atm.commands.Command.Result
 import atm.commands.Command.Status
 import java.util.ArrayDeque
-import java.util.Deque
-import javax.inject.Inject
-import javax.inject.Singleton
 
+interface CommandProcessorImport {
+    val firstCommandRouter: CommandRouter
+}
 
-@Singleton
-internal class CommandProcessor @Inject constructor(firstCommandRouter: CommandRouter) {
-    private val commandRouterStack: Deque<CommandRouter> = ArrayDeque()
-
-    init {
-        commandRouterStack.push(firstCommandRouter)
-    }
+class CommandProcessor(import: CommandProcessorImport) {
+    private val commandRouterStack = ArrayDeque<CommandRouter>()
+        .apply { push(import.firstCommandRouter) }
 
     fun process(input: String): Status {
-        val result: Result = commandRouterStack.peek().route(input)
-        if (result.status() == Status.INPUT_COMPLETED) {
+        val result = commandRouterStack.peek().route(input)
+        return if (result.status() == Status.INPUT_COMPLETED) {
             commandRouterStack.pop()
-            return if (commandRouterStack.isEmpty()) Status.INPUT_COMPLETED else Status.HANDLED
+            if (commandRouterStack.isEmpty()) Status.INPUT_COMPLETED else Status.HANDLED
+        } else {
+            result.nestedCommandRouter().ifPresent(commandRouterStack::push)
+            result.status()
         }
-        result.nestedCommandRouter().ifPresent(commandRouterStack::push)
-        return result.status()
     }
 }

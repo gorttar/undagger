@@ -1,6 +1,6 @@
-package undagger.atm.di.exports
+package atm.di.exports
 
-import undagger.atm.WithdrawalLimiter
+import atm.WithdrawalLimiter
 
 interface WithdrawalLimiterExport {
     val withdrawalLimiter: WithdrawalLimiter

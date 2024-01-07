@@ -1,15 +1,13 @@
 package atm.commands
 
-import atm.io.Outputter
-import javax.inject.Inject
+import atm.di.exports.OutputterExport
+import atm.di.utils.invoke
 
-class HelloWorldCommand @Inject constructor(private val outputter: Outputter) : Command {
-
-    override fun handleInput(input: List<String>): Command.Result {
-        if (input.isNotEmpty()) {
-            return Command.Result.invalid()
-        }
-        outputter.output("world!")
-        return Command.Result.handled()
+class HelloWorldCommand(private val import: OutputterExport) : Command {
+    override fun handleInput(input: List<String>): Command.Result = import {
+        if (input.isEmpty()) {
+            outputter.output("world!")
+            Command.Result.handled()
+        } else Command.Result.invalid()
     }
 }

@@ -1,6 +1,6 @@
-package undagger.atm.di.exports
+package atm.di.exports
 
-import undagger.atm.io.Outputter
+import atm.io.Outputter
 
 interface OutputterExport {
     val outputter: Outputter get() = Outputter(::println)

@@ -1,13 +1,12 @@
 package atm
 
-import atm.di.modules.MaximumWithdrawal
-import atm.di.modules.PerSession
+import atm.di.exports.LimitsExport
 import java.math.BigDecimal
-import javax.inject.Inject
 
-@PerSession
-class WithdrawalLimiter @Inject constructor(@MaximumWithdrawal private val maximumWithdrawal: BigDecimal) {
-    var remainingWithdrawalLimit: BigDecimal = maximumWithdrawal
+interface WithdrawalLimiterImport : LimitsExport
+
+class WithdrawalLimiter(import: WithdrawalLimiterImport) {
+    var remainingWithdrawalLimit = import.maximumWithdrawal
         private set
 
     fun recordDeposit(amount: BigDecimal) {

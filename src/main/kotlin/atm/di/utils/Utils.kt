@@ -1,6 +1,6 @@
-package undagger.atm.di.utils
+package atm.di.utils
 
-import undagger.atm.di.BeanHolder
+import atm.di.BeanHolder
 import kotlin.properties.ReadOnlyProperty
 
 /**

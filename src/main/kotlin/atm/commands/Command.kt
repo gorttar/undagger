@@ -6,7 +6,6 @@ import java.util.Optional
 
 /** Logic to process some user input.  */
 interface Command {
-
     /** Process the rest of the command's words and do something.  */
     fun handleInput(input: List<String>): Result
 
@@ -22,16 +21,15 @@ interface Command {
 
         fun nestedCommandRouter(): Optional<CommandRouter> = nestedCommandRouter
 
-
         companion object {
             fun invalid(): Result = Result(Status.INVALID, Optional.empty())
             fun handled(): Result = Result(Status.HANDLED, Optional.empty())
             fun enterNestedCommandSet(nestedCommandRouter: CommandRouter): Result =
                 Result(Status.HANDLED, Optional.of(nestedCommandRouter))
+
             fun inputCompleted(): Result = Result(Status.INPUT_COMPLETED, Optional.empty())
         }
     }
 
     enum class Status { INVALID, HANDLED, INPUT_COMPLETED }
 }
-

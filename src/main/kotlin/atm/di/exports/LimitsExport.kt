@@ -1,4 +1,4 @@
-package undagger.atm.di.exports
+package atm.di.exports
 
 import java.math.BigDecimal
 

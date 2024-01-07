@@ -1,7 +1,7 @@
-package undagger.atm.di
+package atm.di
 
-import undagger.atm.di.utils.OwnerlessReadOnlyProperty
-import undagger.atm.di.utils.value
+import atm.di.utils.OwnerlessReadOnlyProperty
+import atm.di.utils.value
 
 class BeanHolder<Key, out Bean> private constructor(
     private val delegate: Map<Key, OwnerlessReadOnlyProperty<Bean>>
