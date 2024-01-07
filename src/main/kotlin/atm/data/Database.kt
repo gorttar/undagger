@@ -6,18 +6,12 @@ import javax.inject.Singleton
 
 @Singleton
 class Database @Inject constructor() {
-    init {
-        println("Creating a new $this")
-    }
-
     private val accounts = HashMap<String, Account>()
     fun getAccount(username: String): Account = accounts.computeIfAbsent(username, ::Account)
 
-    class Account(private val username: String) {
-        private var balance = BigDecimal.ZERO
-        fun username(): String = username
-
-        fun balance(): BigDecimal = balance
+    class Account(val username: String) {
+        var balance = BigDecimal.ZERO
+            private set
 
         fun deposit(amount: BigDecimal) {
             balance += amount

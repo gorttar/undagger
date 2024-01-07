@@ -17,4 +17,3 @@ internal interface AmountsModule {
         fun maximumWithdrawal(): BigDecimal = 1000.toBigDecimal()
     }
 }
-

@@ -25,7 +25,7 @@ class CommandRouter @Inject constructor(private val commands: Map<String, @JvmSu
     companion object {
         // Split on whitespace
         private fun split(input: String): List<String> {
-            return listOf(*input.trim { it <= ' ' }.split("\\s+".toRegex()).toTypedArray())
+            return input.trim { it <= ' ' }.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }
         }
     }
 }

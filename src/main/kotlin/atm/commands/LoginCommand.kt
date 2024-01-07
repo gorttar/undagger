@@ -17,17 +17,10 @@ class LoginCommand @Inject constructor(
     account: Optional<Account>
 ) : SingleArgCommand() {
     private val account = account.getOrNull()
-
-    init {
-        println("Creating a new $this")
-    }
-
-    public override fun handleArg(arg: String): Result = account?.let { Result.handled() } ?: run {
+    override fun handleArg(arg: String): Result = account?.let { Result.handled() } ?: run {
         val username = arg
         val account = database.getAccount(username)
-        outputter.output(
-            "$username is logged in with balance: ${account.balance()}"
-        )
+        outputter.output("$username is logged in with balance: ${account.balance}")
         Result.enterNestedCommandSet(userCommandsRouterFactory.create(account).router())
     }
 }

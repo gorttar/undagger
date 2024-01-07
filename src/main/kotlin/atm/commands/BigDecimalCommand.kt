@@ -5,14 +5,14 @@ import java.math.BigDecimal
 
 
 /**
- * Abstract [Command] that expects a single argument that can be converted to [ ].
+ * Abstract [Command] expecting a single argument that can be converted to [BigDecimal].
  */
 abstract class BigDecimalCommand protected constructor(private val outputter: Outputter) : SingleArgCommand() {
     override fun handleArg(arg: String): Command.Result {
         val amount = tryParse(arg)
         when {
             amount == null -> outputter.output("$arg is not a valid number")
-            amount.signum() <= 0 -> outputter.output("amount must be positive")
+            amount <= BigDecimal.ZERO -> outputter.output("amount must be positive")
             else -> handleAmount(amount)
         }
         return Command.Result.handled()
