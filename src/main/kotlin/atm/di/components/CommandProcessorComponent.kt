@@ -14,10 +14,10 @@ import javax.inject.Singleton
         HelloWorldModule::class,
         SystemOutModule::class,
         LoginCommandModule::class,
-        UserCommandsRouter.InstallationModule::class,
+        UserCommandsComponent.InstallationModule::class,
         AmountsModule::class
     ]
 )
-internal interface CommandProcessorFactory {
+internal interface CommandProcessorComponent {
     fun commandProcessor(): CommandProcessor
 }

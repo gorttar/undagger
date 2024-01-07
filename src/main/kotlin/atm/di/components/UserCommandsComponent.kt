@@ -10,14 +10,14 @@ import dagger.Subcomponent
 
 @PerSession
 @Subcomponent(modules = [UserCommandsModule::class])
-interface UserCommandsRouter {
+interface UserCommandsComponent {
     fun router(): CommandRouter
 
     @Subcomponent.Factory
     interface Factory {
-        fun create(@BindsInstance account: Account): UserCommandsRouter
+        fun create(@BindsInstance account: Account): UserCommandsComponent
     }
 
-    @Module(subcomponents = [UserCommandsRouter::class])
+    @Module(subcomponents = [UserCommandsComponent::class])
     interface InstallationModule
 }
