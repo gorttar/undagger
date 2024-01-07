@@ -1,8 +1,9 @@
 package undagger.atm.data
 
+import undagger.atm.di.Bean
 import java.math.BigDecimal
 
-class Database {
+class Database : Bean {
     private val accounts: MutableMap<String, Account> = HashMap()
 
     fun getAccount(username: String): Account {

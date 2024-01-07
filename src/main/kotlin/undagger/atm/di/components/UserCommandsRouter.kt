@@ -8,24 +8,25 @@ import undagger.atm.commands.LogoutCommand
 import undagger.atm.commands.UserCommandImport
 import undagger.atm.commands.WithdrawCommand
 import undagger.atm.commands.WithdrawCommandImport
-import undagger.atm.di.utils.new
+import undagger.atm.di.Bean
+import undagger.atm.di.BeanMap
+import undagger.atm.di.Import
 import undagger.atm.di.utils.perComponent
 
 // can't make it inner interface of UserCommandsRouter: https://youtrack.jetbrains.com/issue/KT-17455/
-interface UserCommandsRouterImport : UserCommandImport, CommandRouterImport
+interface UserCommandsRouterImport : UserCommandImport, CommandRouterImport, Import
 
 //@PerSession
 //@Subcomponent(modules = [UserCommandsModule::class])
 class UserCommandsRouter(import: UserCommandsRouterImport) : //todo naming; does NOT inherit CommandRouter
     UserCommandsRouterImport by import,
-    WithdrawCommandImport {
+    WithdrawCommandImport,
+    Bean {
 
     val router: CommandRouter by perComponent(::CommandRouter)
-    override val commands: Map<String, Command> by perComponent {
-        import.commands + mapOf(
-            "deposit" to new(::DepositCommand),
-            "withdraw" to new(::WithdrawCommand),
-            "logout" to new(::LogoutCommand),
-        )
-    }
+    override val commands: BeanMap<Command> = import.commands + perComponent(
+        "deposit" to ::DepositCommand,
+        "withdraw" to ::WithdrawCommand,
+        "logout" to ::LogoutCommand,
+    )
 }

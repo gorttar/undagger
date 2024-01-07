@@ -2,6 +2,7 @@ package undagger.atm.commands
 
 import undagger.atm.commands.Command.Result
 import undagger.atm.di.exports.OutputterExport
+import undagger.atm.di.utils.invoke
 import java.math.BigDecimal
 
 
@@ -9,7 +10,7 @@ import java.math.BigDecimal
  * Abstract [Command] expecting a single argument that can be converted to [BigDecimal].
  */
 abstract class BigDecimalCommand protected constructor(private val import: OutputterExport) : SingleArgCommand() {
-    override fun handleArg(arg: String): Result = with(import) {
+    override fun handleArg(arg: String): Result = import {
         val amount = tryParse(arg)
         when {
             amount == null -> outputter.output("$arg is not a valid number")

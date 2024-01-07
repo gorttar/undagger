@@ -10,7 +10,9 @@ import undagger.atm.commands.LoginCommand
 import undagger.atm.commands.LoginCommandImport
 import undagger.atm.data.Database
 import undagger.atm.data.Database.Account
+import undagger.atm.di.BeanMap
 import undagger.atm.di.exports.OutputterExport
+import undagger.atm.di.utils.dependent
 import undagger.atm.di.utils.new
 import undagger.atm.di.utils.perComponent
 
@@ -20,14 +22,12 @@ object CommandProcessorFactory :
     CommandRouterImport,
     CommandProcessorImport {
 
-    override val database: Database by perComponent(::Database)
+    override val database: Database by perComponent(dependent(::Database))
     override val firstCommandRouter: CommandRouter by perComponent(::CommandRouter)
-    override val commands: Map<String, Command> by perComponent {
-        mapOf(
-            "hello" to new(::HelloWorldCommand),
-            "login" to new(::LoginCommand),
-        )
-    }
+    override val commands: BeanMap<Command> = perComponent(
+        "hello" to ::HelloWorldCommand,
+        "login" to ::LoginCommand,
+    )
     val processor: CommandProcessor by perComponent(::CommandProcessor)
     override fun userCommandRouter(account: Account): UserCommandsRouter = object :
         UserCommandsRouterImport,

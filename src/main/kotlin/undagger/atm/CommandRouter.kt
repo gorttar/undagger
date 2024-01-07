@@ -2,12 +2,14 @@ package undagger.atm
 
 import undagger.atm.commands.Command
 import undagger.atm.commands.Command.Result.Companion.invalid
+import undagger.atm.di.Bean
+import undagger.atm.di.BeanMap
 
 interface CommandRouterImport {
-    val commands: Map<String, Command>
+    val commands: BeanMap<Command>
 }
 
-class CommandRouter(import: CommandRouterImport) {
+class CommandRouter(import: CommandRouterImport) : Bean {
     private val commands: Map<String, Command> by import::commands
 
     fun route(input: String): Command.Result {

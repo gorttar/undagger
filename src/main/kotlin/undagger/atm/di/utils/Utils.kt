@@ -1,16 +1,25 @@
 package undagger.atm.di.utils
 
+import undagger.atm.di.Bean
+import undagger.atm.di.BeanMap
+import undagger.atm.di.BeanMap.Companion.beanMapOf
+import undagger.atm.di.Import
 import kotlin.properties.ReadOnlyProperty
 
 /**
- * Create [new] [Bean] using its [constructor] and [this] [Import]
+ * [invoke] [this] [Import] [Imp] on [block] effectively applying [block] to [this] evaluating it to [R]
  */
-inline fun <Import, Bean> Import.new(constructor: Import.() -> Bean): Bean = constructor()
+inline operator fun <Imp : Import, R> Imp.invoke(block: Imp.() -> R): R = run(block)
 
 /**
- * Create [new] independent [Bean] using its [constructor]
+ * Create [new] [Bean] [B] using its [constructor] and [this] [Import] [Imp]
  */
-inline fun <Bean> new(constructor: () -> Bean): Bean = constructor()
+inline fun <Imp : Import, B : Bean> Imp.new(constructor: Imp.() -> B): B = this(constructor)
+
+/**
+ * Make [constructor] of [Bean] [B] [dependent] on [Import] [Imp]
+ */
+inline fun <Imp : Import, B : Bean> dependent(crossinline constructor: () -> B): Imp.() -> B = { constructor() }
 
 /**
  * Base interface that can be used for implementing owner and property independent (ownerless)
@@ -24,37 +33,49 @@ inline fun <Bean> new(constructor: () -> Bean): Bean = constructor()
  */
 typealias OwnerlessReadOnlyProperty<V> = ReadOnlyProperty<Any?, V>
 
-inline fun <V> OwnerlessReadOnlyProperty(crossinline block: () -> V): OwnerlessReadOnlyProperty<V> =
-    OwnerlessReadOnlyProperty { _, _ -> block() }
+/**
+ * constructor of [OwnerlessReadOnlyProperty]<[V]>
+ */
+inline fun <V> OwnerlessReadOnlyProperty(
+    crossinline block: () -> V
+): OwnerlessReadOnlyProperty<V> = OwnerlessReadOnlyProperty { _, _ -> block() }
+
+private val nothing: Nothing get() = error("Nothing can't be obtained")
+
+val <V> OwnerlessReadOnlyProperty<V>.value: V get() = getValue(null, ::nothing)
 
 /**
- * Create [perRequest] delegate for [Bean] using its [constructor] and [this] [Import]
+ * Create [perRequest] delegate for [Bean] [B] using its [constructor] and [this] [Import] [Imp]
  * Created delegate invokes [constructor] for each invocation of its [ReadOnlyProperty.getValue]
  */
-inline fun <Import, Bean> Import.perRequest(
-    crossinline constructor: Import.() -> Bean
-): OwnerlessReadOnlyProperty<Bean> = OwnerlessReadOnlyProperty { constructor() }
+inline fun <Imp : Import, B : Bean> Imp.perRequest(
+    crossinline constructor: Imp.() -> B
+): OwnerlessReadOnlyProperty<B> = OwnerlessReadOnlyProperty { new(constructor) }
 
 /**
- * Create [perRequest] delegate for independent [Bean] using its [constructor]
- * Created delegate invokes [constructor] for each invocation of its [ReadOnlyProperty.getValue]
+ * Create [perComponent] [BeanMap]<[B]> which values are evaluated by corresponding delegates
+ * for [Bean] [B]
+ * Delegates are created using constructors from [keyToConstructor] and [this] [Import] [Imp]
+ * Created delegates invokes constructors for each invocation of their [ReadOnlyProperty.getValue]
  */
-inline fun <Bean> perRequest(
-    crossinline constructor: () -> Bean
-): OwnerlessReadOnlyProperty<Bean> = Unit.perRequest { constructor() }
+fun <Imp : Import, B : Bean> Imp.perRequest(
+    vararg keyToConstructor: Pair<String, Imp.() -> B>
+): BeanMap<B> = beanMapOf(*keyToConstructor.map { (k, constructor) -> k to perRequest(constructor) }.toTypedArray())
 
 /**
- * Create [perComponent] delegate [Bean] using its [constructor] and [this] [Import]
+ * Create [perComponent] delegate for [Bean] [B] using its [constructor] and [this] [Import] [Imp]
  * Created delegate invokes [constructor] once during first invocation of its [ReadOnlyProperty.getValue]
  */
-inline fun <Import, Bean> Import.perComponent(
-    crossinline constructor: Import.() -> Bean
-): OwnerlessReadOnlyProperty<Bean> = OwnerlessReadOnlyProperty(lazy { constructor() }::value)
+inline fun <Imp : Import, B : Bean> Imp.perComponent(
+    crossinline constructor: Imp.() -> B
+): OwnerlessReadOnlyProperty<B> = OwnerlessReadOnlyProperty(lazy { new(constructor) }::value)
 
 /**
- * Create [perComponent] delegate for independent [Bean] using its [constructor]
- * Created delegate invokes [constructor] once during first invocation of its [ReadOnlyProperty.getValue]
+ * Create [perComponent] [BeanMap]<[B]> which values are evaluated by corresponding delegates
+ * for [Bean] [B]
+ * Delegates are created using constructors from [keyToConstructor] and [this] [Import] [Imp]
+ * Created delegates invokes constructors once during first invocation of their [ReadOnlyProperty.getValue]
  */
-inline fun <Bean> perComponent(
-    crossinline constructor: () -> Bean
-): OwnerlessReadOnlyProperty<Bean> = Unit.perComponent { constructor() }
+fun <Imp : Import, B : Bean> Imp.perComponent(
+    vararg keyToConstructor: Pair<String, Imp.() -> B>
+): BeanMap<B> = beanMapOf(*keyToConstructor.map { (k, constructor) -> k to perComponent(constructor) }.toTypedArray())
