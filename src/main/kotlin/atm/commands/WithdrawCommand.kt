@@ -1,10 +1,10 @@
 package atm.commands
 
-import atm.di.exports.LimitsExport
+import atm.di.exports.AmountsExport
 import atm.di.utils.invoke
 import java.math.BigDecimal
 
-interface WithdrawCommandImport : UserCommandImport, LimitsExport
+interface WithdrawCommandImport : UserCommandImport, AmountsExport
 
 class WithdrawCommand(private val import: WithdrawCommandImport) : BigDecimalCommand(import) {
     override fun handleAmount(amount: BigDecimal) = import {

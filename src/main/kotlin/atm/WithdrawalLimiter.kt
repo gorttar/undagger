@@ -1,9 +1,9 @@
 package atm
 
-import atm.di.exports.LimitsExport
+import atm.di.exports.AmountsExport
 import java.math.BigDecimal
 
-interface WithdrawalLimiterImport : LimitsExport
+interface WithdrawalLimiterImport : AmountsExport
 
 class WithdrawalLimiter(import: WithdrawalLimiterImport) {
     var remainingWithdrawalLimit = import.maximumWithdrawal

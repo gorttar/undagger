@@ -17,13 +17,13 @@ import atm.di.utils.dependent
 import atm.di.utils.new
 import atm.di.utils.perComponent
 
-interface CommandProcessorFactoryExport :
+interface CommandProcessorComponentExport :
     OutputterExport,
     LoginCommandImport,
     CommandRouterImport,
     CommandProcessorImport
 
-object CommandProcessorFactory : CommandProcessorFactoryExport {
+object CommandProcessorComponent : CommandProcessorComponentExport {
     override val database: Database by perComponent(dependent(::Database))
     override val firstCommandRouter: CommandRouter by perComponent(::CommandRouter)
     override val commands: BeanHolder<String, Command> = perComponent(
@@ -31,13 +31,13 @@ object CommandProcessorFactory : CommandProcessorFactoryExport {
         "login" to ::LoginCommand,
     )
     val processor: CommandProcessor by perComponent(::CommandProcessor)
-    override fun userCommandRouter(account: Account): UserCommandsRouter = object :
+    override fun userCommandsComponent(account: Account): UserCommandsComponent = object :
         CommandRouterImport by this,
         DatabaseExport by this,
         OutputterExport,
-        UserCommandsRouterImport {
+        UserCommandsComponentImport {
 
         override val account: Account = account
     }
-        .new(::UserCommandsRouter)
+        .new(::UserCommandsComponent)
 }

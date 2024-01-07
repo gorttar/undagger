@@ -22,11 +22,11 @@ import atm.di.utils.dependent
 import atm.di.utils.perComponent
 
 // can't make it inner interface of UserCommandsRouter: https://youtrack.jetbrains.com/issue/KT-17455/
-interface UserCommandsRouterImport : AccountExport, DatabaseExport {
+interface UserCommandsComponentImport : AccountExport, DatabaseExport {
     override val account: Database.Account
 }
 
-interface UserCommandsRouterExport :
+interface UserCommandsComponentExport :
     CommandRouterImport,
     OutputterExport,
     LoginCommandImport,
@@ -34,11 +34,9 @@ interface UserCommandsRouterExport :
     WithdrawCommandImport,
     WithdrawalLimiterImport
 
-//@PerSession
-//@Subcomponent(modules = [UserCommandsModule::class])
-class UserCommandsRouter(import: UserCommandsRouterImport) : //todo naming; does NOT inherit CommandRouter
-    UserCommandsRouterImport by import,
-    UserCommandsRouterExport {
+class UserCommandsComponent(import: UserCommandsComponentImport) :
+    UserCommandsComponentImport by import,
+    UserCommandsComponentExport {
 
     val router: CommandRouter by perComponent(::CommandRouter)
     override val commands: BeanHolder<String, Command> = perComponent(
@@ -49,6 +47,8 @@ class UserCommandsRouter(import: UserCommandsRouterImport) : //todo naming; does
         "logout" to dependent(::LogoutCommand),
     )
 
-    override fun userCommandRouter(account: Database.Account): UserCommandsRouter = error("No nested logins allowed!")
+    override fun userCommandsComponent(account: Database.Account): UserCommandsComponent =
+        error("No nested logins allowed!")
+
     override val withdrawalLimiter: WithdrawalLimiter by perComponent(::WithdrawalLimiter)
 }
