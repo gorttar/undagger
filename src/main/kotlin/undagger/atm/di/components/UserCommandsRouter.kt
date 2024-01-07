@@ -21,7 +21,7 @@ import undagger.atm.di.exports.OutputterExport
 import undagger.atm.di.utils.perComponent
 
 // can't make it inner interface of UserCommandsRouter: https://youtrack.jetbrains.com/issue/KT-17455/
-interface UserCommandsRouterImport : AccountExport, DatabaseExport, CommandRouterImport {
+interface UserCommandsRouterImport : AccountExport, DatabaseExport {
     override val account: Database.Account
 }
 
@@ -37,8 +37,6 @@ interface UserCommandsRouterExport :
 //@Subcomponent(modules = [UserCommandsModule::class])
 class UserCommandsRouter(import: UserCommandsRouterImport) : //todo naming; does NOT inherit CommandRouter
     UserCommandsRouterImport by import,
-    WithdrawCommandImport,
-    WithdrawalLimiterImport,
     UserCommandsRouterExport {
 
     val router: CommandRouter by perComponent(::CommandRouter)

@@ -17,12 +17,13 @@ import undagger.atm.di.utils.dependent
 import undagger.atm.di.utils.new
 import undagger.atm.di.utils.perComponent
 
-object CommandProcessorFactory :
+interface CommandProcessorFactoryExport :
     OutputterExport,
     LoginCommandImport,
     CommandRouterImport,
-    CommandProcessorImport {
+    CommandProcessorImport
 
+object CommandProcessorFactory : CommandProcessorFactoryExport {
     override val database: Database by perComponent(dependent(::Database))
     override val firstCommandRouter: CommandRouter by perComponent(::CommandRouter)
     override val commands: BeanHolder<String, Command> = perComponent(
