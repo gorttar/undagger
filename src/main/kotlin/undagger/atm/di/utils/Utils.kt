@@ -1,8 +1,7 @@
 package undagger.atm.di.utils
 
 import undagger.atm.di.Bean
-import undagger.atm.di.BeanMap
-import undagger.atm.di.BeanMap.Companion.beanMapOf
+import undagger.atm.di.BeanHolder
 import undagger.atm.di.Import
 import kotlin.properties.ReadOnlyProperty
 
@@ -45,7 +44,7 @@ private val nothing: Nothing get() = error("Nothing can't be obtained")
 val <V> OwnerlessReadOnlyProperty<V>.value: V get() = getValue(null, ::nothing)
 
 /**
- * Create [perRequest] delegate for [Bean] [B] using its [constructor] and [this] [Import] [Imp]
+ * [perComponent] creates delegate for [Bean] [B] using its [constructor] and [this] [Import] [Imp]
  * Created delegate invokes [constructor] for each invocation of its [ReadOnlyProperty.getValue]
  */
 inline fun <Imp : Import, B : Bean> Imp.perRequest(
@@ -53,17 +52,18 @@ inline fun <Imp : Import, B : Bean> Imp.perRequest(
 ): OwnerlessReadOnlyProperty<B> = OwnerlessReadOnlyProperty { new(constructor) }
 
 /**
- * Create [perComponent] [BeanMap]<[B]> which values are evaluated by corresponding delegates
+ * [perComponent] creates [BeanHolder]<[String], [B]> which values are evaluated by corresponding delegates
  * for [Bean] [B]
  * Delegates are created using constructors from [keyToConstructor] and [this] [Import] [Imp]
  * Created delegates invokes constructors for each invocation of their [ReadOnlyProperty.getValue]
  */
 fun <Imp : Import, B : Bean> Imp.perRequest(
     vararg keyToConstructor: Pair<String, Imp.() -> B>
-): BeanMap<B> = beanMapOf(*keyToConstructor.map { (k, constructor) -> k to perRequest(constructor) }.toTypedArray())
+): BeanHolder<String, B> =
+    BeanHolder(*keyToConstructor.map { (k, constructor) -> k to perRequest(constructor) }.toTypedArray())
 
 /**
- * Create [perComponent] delegate for [Bean] [B] using its [constructor] and [this] [Import] [Imp]
+ * [perComponent] creates delegate for [Bean] [B] using its [constructor] and [this] [Import] [Imp]
  * Created delegate invokes [constructor] once during first invocation of its [ReadOnlyProperty.getValue]
  */
 inline fun <Imp : Import, B : Bean> Imp.perComponent(
@@ -71,11 +71,12 @@ inline fun <Imp : Import, B : Bean> Imp.perComponent(
 ): OwnerlessReadOnlyProperty<B> = OwnerlessReadOnlyProperty(lazy { new(constructor) }::value)
 
 /**
- * Create [perComponent] [BeanMap]<[B]> which values are evaluated by corresponding delegates
+ * [perComponent] creates [BeanHolder]<[String], [B]> which values are evaluated by corresponding delegates
  * for [Bean] [B]
  * Delegates are created using constructors from [keyToConstructor] and [this] [Import] [Imp]
  * Created delegates invokes constructors once during first invocation of their [ReadOnlyProperty.getValue]
  */
 fun <Imp : Import, B : Bean> Imp.perComponent(
     vararg keyToConstructor: Pair<String, Imp.() -> B>
-): BeanMap<B> = beanMapOf(*keyToConstructor.map { (k, constructor) -> k to perComponent(constructor) }.toTypedArray())
+): BeanHolder<String, B> =
+    BeanHolder(*keyToConstructor.map { (k, constructor) -> k to perComponent(constructor) }.toTypedArray())

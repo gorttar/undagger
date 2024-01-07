@@ -10,7 +10,7 @@ import undagger.atm.commands.LoginCommand
 import undagger.atm.commands.LoginCommandImport
 import undagger.atm.data.Database
 import undagger.atm.data.Database.Account
-import undagger.atm.di.BeanMap
+import undagger.atm.di.BeanHolder
 import undagger.atm.di.exports.OutputterExport
 import undagger.atm.di.utils.dependent
 import undagger.atm.di.utils.new
@@ -24,7 +24,7 @@ object CommandProcessorFactory :
 
     override val database: Database by perComponent(dependent(::Database))
     override val firstCommandRouter: CommandRouter by perComponent(::CommandRouter)
-    override val commands: BeanMap<Command> = perComponent(
+    override val commands: BeanHolder<String, Command> = perComponent(
         "hello" to ::HelloWorldCommand,
         "login" to ::LoginCommand,
     )

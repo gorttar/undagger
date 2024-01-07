@@ -3,22 +3,21 @@ package undagger.atm
 import undagger.atm.commands.Command
 import undagger.atm.commands.Command.Result.Companion.invalid
 import undagger.atm.di.Bean
-import undagger.atm.di.BeanMap
+import undagger.atm.di.BeanHolder
+import undagger.atm.di.Import
 
-interface CommandRouterImport {
-    val commands: BeanMap<Command>
+interface CommandRouterImport : Import {
+    val commands: BeanHolder<String, Command>
 }
 
-class CommandRouter(import: CommandRouterImport) : Bean {
-    private val commands: Map<String, Command> by import::commands
-
+class CommandRouter(private val import: CommandRouterImport) : Bean {
     fun route(input: String): Command.Result {
         val splitInput = split(input)
         if (splitInput.isEmpty()) {
             return invalidCommand(input)
         }
         val commandKey = splitInput[0]
-        val command = commands[commandKey] ?: return invalidCommand(input)
+        val command = import.commands[commandKey] ?: return invalidCommand(input)
         val args = splitInput.subList(1, splitInput.size)
         val result = command.handleInput(args)
         return if (result.status() == Command.Status.INVALID) invalidCommand(input) else result

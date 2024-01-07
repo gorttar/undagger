@@ -9,7 +9,8 @@ import undagger.atm.commands.UserCommandImport
 import undagger.atm.commands.WithdrawCommand
 import undagger.atm.commands.WithdrawCommandImport
 import undagger.atm.di.Bean
-import undagger.atm.di.BeanMap
+import undagger.atm.di.BeanHolder
+import undagger.atm.di.BeanHolder.Companion.plus
 import undagger.atm.di.Import
 import undagger.atm.di.utils.perComponent
 
@@ -24,7 +25,7 @@ class UserCommandsRouter(import: UserCommandsRouterImport) : //todo naming; does
     Bean {
 
     val router: CommandRouter by perComponent(::CommandRouter)
-    override val commands: BeanMap<Command> = import.commands + perComponent(
+    override val commands: BeanHolder<String, Command> = import.commands + perComponent(
         "deposit" to ::DepositCommand,
         "withdraw" to ::WithdrawCommand,
         "logout" to ::LogoutCommand,

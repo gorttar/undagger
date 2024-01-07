@@ -2,9 +2,10 @@ package undagger.atm
 
 import undagger.atm.commands.Command.Status
 import undagger.atm.di.Bean
+import undagger.atm.di.Import
 import java.util.ArrayDeque
 
-interface CommandProcessorImport {
+interface CommandProcessorImport : Import {
     val firstCommandRouter: CommandRouter
 }
 
