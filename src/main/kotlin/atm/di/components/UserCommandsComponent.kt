@@ -26,19 +26,22 @@ interface UserCommandsComponentImport : AccountExport, DatabaseExport {
     override val account: Database.Account
 }
 
-interface UserCommandsComponentExport :
+interface UserCommandsComponent {
+    val router: CommandRouter
+}
+
+fun userCommandsComponent(import: UserCommandsComponentImport): UserCommandsComponent = object :
+    UserCommandsComponent,
+    UserCommandsComponentImport by import,
     CommandRouterImport,
     OutputterExport,
     LoginCommandImport,
     UserCommandImport,
     WithdrawCommandImport,
-    WithdrawalLimiterImport
+    WithdrawalLimiterImport {
 
-class UserCommandsComponent(import: UserCommandsComponentImport) :
-    UserCommandsComponentImport by import,
-    UserCommandsComponentExport {
-
-    val router: CommandRouter by perComponent(::CommandRouter)
+    override val router: CommandRouter by perComponent(::CommandRouter)
+    override val withdrawalLimiter: WithdrawalLimiter by perComponent(::WithdrawalLimiter)
     override val commands: BeanHolder<String, Command> = perComponent(
         "hello" to ::HelloWorldCommand,
         "login" to ::LoginCommand,
@@ -49,6 +52,4 @@ class UserCommandsComponent(import: UserCommandsComponentImport) :
 
     override fun userCommandsComponent(account: Database.Account): UserCommandsComponent =
         error("No nested logins allowed!")
-
-    override val withdrawalLimiter: WithdrawalLimiter by perComponent(::WithdrawalLimiter)
 }
