@@ -1,15 +1,13 @@
 package undagger.atm
 
 import undagger.atm.commands.Command.Status
-import undagger.atm.di.Bean
-import undagger.atm.di.Import
 import java.util.ArrayDeque
 
-interface CommandProcessorImport : Import {
+interface CommandProcessorImport {
     val firstCommandRouter: CommandRouter
 }
 
-class CommandProcessor(import: CommandProcessorImport) : Bean {
+class CommandProcessor(import: CommandProcessorImport) {
     private val commandRouterStack = ArrayDeque<CommandRouter>()
         .apply { push(import.firstCommandRouter) }
 

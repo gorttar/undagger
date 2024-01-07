@@ -2,15 +2,13 @@ package undagger.atm
 
 import undagger.atm.commands.Command
 import undagger.atm.commands.Command.Result.Companion.invalid
-import undagger.atm.di.Bean
 import undagger.atm.di.BeanHolder
-import undagger.atm.di.Import
 
-interface CommandRouterImport : Import {
+interface CommandRouterImport {
     val commands: BeanHolder<String, Command>
 }
 
-class CommandRouter(private val import: CommandRouterImport) : Bean {
+class CommandRouter(private val import: CommandRouterImport) {
     fun route(input: String): Command.Result {
         val splitInput = split(input)
         if (splitInput.isEmpty()) {

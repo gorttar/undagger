@@ -1,12 +1,11 @@
 package undagger.atm.commands
 
 import undagger.atm.CommandRouter
-import undagger.atm.di.Bean
 import java.util.Optional
 
 
 /** Logic to process some user input.  */
-interface Command : Bean {
+interface Command {
     /** Process the rest of the command's words and do something.  */
     fun handleInput(input: List<String>): Result
 
