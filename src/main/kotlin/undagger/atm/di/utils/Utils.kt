@@ -13,12 +13,12 @@ inline operator fun <Import, R> Import.invoke(block: Import.() -> R): R = run(bl
  * Create [new] instance of [Bean] using its [constructor] and [Import]
  * represented by [this]
  */
-inline fun <Import, Bean> Import.new(constructor: Import.() -> Bean): Bean = this(constructor)
+inline fun <Import, Bean> Import.new(constructor: (Import) -> Bean): Bean = this(constructor)
 
 /**
  * Make [constructor] for [Bean] formally [dependent] from [Import]
  */
-inline fun <Import, Bean> dependent(crossinline constructor: () -> Bean): Import.() -> Bean = { constructor() }
+inline fun <Import, Bean> dependent(crossinline constructor: () -> Bean): (Import) -> Bean = { constructor() }
 
 /**
  * Base interface that can be used for implementing owner and property independent (ownerless)
@@ -49,7 +49,7 @@ val <V> OwnerlessReadOnlyProperty<V>.value: V get() = getValue(null, ::undefined
  * Created delegate calls [constructor] for each invocation of its [ReadOnlyProperty.getValue]
  */
 inline fun <Import, Bean> Import.perRequest(
-    crossinline constructor: Import.() -> Bean
+    crossinline constructor: (Import) -> Bean
 ): OwnerlessReadOnlyProperty<Bean> = OwnerlessReadOnlyProperty { new(constructor) }
 
 /**
@@ -58,7 +58,7 @@ inline fun <Import, Bean> Import.perRequest(
  * Created delegates invokes constructors for each invocation of their [ReadOnlyProperty.getValue]
  */
 fun <Import, Key, Bean> Import.perRequest(
-    vararg keyToConstructor: Pair<Key, Import.() -> Bean>
+    vararg keyToConstructor: Pair<Key, (Import) -> Bean>
 ): BeanHolder<Key, Bean> =
     BeanHolder(*keyToConstructor.map { (k, constructor) -> k to perRequest(constructor) }.toTypedArray())
 
@@ -68,7 +68,7 @@ fun <Import, Key, Bean> Import.perRequest(
  * Created delegate invokes [constructor] once during first invocation of its [ReadOnlyProperty.getValue]
  */
 inline fun <Import, Bean> Import.perComponent(
-    crossinline constructor: Import.() -> Bean
+    crossinline constructor: (Import) -> Bean
 ): OwnerlessReadOnlyProperty<Bean> = OwnerlessReadOnlyProperty(lazy { new(constructor) }::value)
 
 /**
@@ -77,6 +77,6 @@ inline fun <Import, Bean> Import.perComponent(
  * Created delegates invokes constructors once during first invocation of their [ReadOnlyProperty.getValue]
  */
 fun <Import, Key, Bean> Import.perComponent(
-    vararg keyToConstructor: Pair<Key, Import.() -> Bean>
+    vararg keyToConstructor: Pair<Key, (Import) -> Bean>
 ): BeanHolder<Key, Bean> =
     BeanHolder(*keyToConstructor.map { (k, constructor) -> k to perComponent(constructor) }.toTypedArray())
