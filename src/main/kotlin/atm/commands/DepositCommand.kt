@@ -6,6 +6,7 @@ import atm.io.Outputter
 import java.math.BigDecimal
 import javax.inject.Inject
 
+/** Deposits money to the ATM. */
 class DepositCommand @Inject constructor(
     private val account: Account,
     private val outputter: Outputter,
@@ -14,6 +15,6 @@ class DepositCommand @Inject constructor(
     override fun handleAmount(amount: BigDecimal) {
         account.deposit(amount)
         withdrawalLimiter.recordDeposit(amount)
-        outputter.output("${account.username} now has: ${account.balance}")
+        outputter.output("your new balance is: ${account.balance}")
     }
 }

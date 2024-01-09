@@ -1,23 +1,25 @@
 package atm.di.components
 
 import atm.CommandRouter
-import atm.data.Database.Account
-import atm.di.modules.PerSession
-import atm.di.modules.UserCommandsModule
+import atm.di.AccountModule
+import atm.di.AmountsModule
+import atm.di.PerSession
+import atm.di.UserCommandsModule
+import atm.di.Username
 import dagger.BindsInstance
-import dagger.Module
 import dagger.Subcomponent
 
 @PerSession
-@Subcomponent(modules = [UserCommandsModule::class])
+@Subcomponent(modules = [AccountModule::class, AmountsModule::class, UserCommandsModule::class])
 interface UserCommandsComponent {
-    fun router(): CommandRouter
+    val router: CommandRouter
 
     @Subcomponent.Factory
     interface Factory {
-        fun create(@BindsInstance account: Account): UserCommandsComponent
+        fun create(
+            @BindsInstance
+            @Username
+            username: String
+        ): UserCommandsComponent
     }
-
-    @Module(subcomponents = [UserCommandsComponent::class])
-    interface InstallationModule
 }

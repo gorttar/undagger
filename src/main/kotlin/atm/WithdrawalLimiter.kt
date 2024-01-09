@@ -1,10 +1,11 @@
 package atm
 
-import atm.di.modules.MaximumWithdrawal
-import atm.di.modules.PerSession
+import atm.di.MaximumWithdrawal
+import atm.di.PerSession
 import java.math.BigDecimal
 import javax.inject.Inject
 
+/** Maintains the withdrawal amount available within a user session. */
 @PerSession
 class WithdrawalLimiter @Inject constructor(@MaximumWithdrawal private val maximumWithdrawal: BigDecimal) {
     var remainingWithdrawalLimit: BigDecimal = maximumWithdrawal
