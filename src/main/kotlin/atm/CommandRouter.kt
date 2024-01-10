@@ -1,35 +1,25 @@
 package atm
 
 import atm.commands.Command
-import atm.commands.Command.Result.Companion.invalid
-import atm.di.BeanHolder
+import atm.commands.Command.Result
+import atm.commands.Command.Status
+import atm.di.CommandsExport
 
-interface CommandRouterImport {
-    val commands: BeanHolder<String, Command>
-}
+/** Routes individual text commands to the appropriate [Command] (s). */
+class CommandRouter(private val import: CommandsExport) {
 
-class CommandRouter(private val import: CommandRouterImport) {
-    fun route(input: String): Command.Result {
-        val splitInput = split(input)
-        if (splitInput.isEmpty()) {
-            return invalidCommand(input)
+    /**
+     * Calls [Command.handleInput] on this router's [CommandsExport.commands] from [import]
+     */
+    fun route(input: String): Result = input
+        .trim()
+        .split("\\s+".toRegex())
+        .dropLastWhile { it.isEmpty() }
+        .takeUnless { splitInput -> splitInput.isEmpty() }
+        ?.let { splitInput -> import.commands[splitInput[0]]?.run { handleInput(splitInput.drop(1)) } }
+        ?.takeUnless { it.status == Status.INVALID }
+        ?: run {
+            println("couldn't understand \"$input\". please try again.")
+            Result.invalid
         }
-        val commandKey = splitInput[0]
-        val command = import.commands[commandKey] ?: return invalidCommand(input)
-        val args = splitInput.subList(1, splitInput.size)
-        val result = command.handleInput(args)
-        return if (result.status() == Command.Status.INVALID) invalidCommand(input) else result
-    }
-
-    private fun invalidCommand(input: String): Command.Result {
-        println("couldn't understand \"$input\". please try again.")
-        return invalid()
-    }
-
-    companion object {
-        // Split on whitespace
-        private fun split(input: String): List<String> {
-            return input.trim { it <= ' ' }.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }
-        }
-    }
 }

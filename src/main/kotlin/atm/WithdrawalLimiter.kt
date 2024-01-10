@@ -1,12 +1,11 @@
 package atm
 
-import atm.di.exports.AmountsExport
+import atm.di.AmountsExport
 import java.math.BigDecimal
 
-interface WithdrawalLimiterImport : AmountsExport
-
-class WithdrawalLimiter(import: WithdrawalLimiterImport) {
-    var remainingWithdrawalLimit = import.maximumWithdrawal
+/** Maintains the withdrawal amount available within a user session. */
+class WithdrawalLimiter(import: AmountsExport) {
+    var remainingWithdrawalLimit: BigDecimal = import.maximumWithdrawal
         private set
 
     fun recordDeposit(amount: BigDecimal) {

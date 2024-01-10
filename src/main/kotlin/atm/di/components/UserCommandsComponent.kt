@@ -1,55 +1,56 @@
 package atm.di.components
 
 import atm.CommandRouter
-import atm.CommandRouterImport
 import atm.WithdrawalLimiter
-import atm.WithdrawalLimiterImport
 import atm.commands.Command
-import atm.commands.DepositCommand
-import atm.commands.HelloWorldCommand
-import atm.commands.LoginCommand
-import atm.commands.LoginCommandImport
-import atm.commands.LogoutCommand
-import atm.commands.UserCommandImport
-import atm.commands.WithdrawCommand
-import atm.commands.WithdrawCommandImport
-import atm.data.Database
-import atm.di.BeanHolder
-import atm.di.exports.AccountExport
-import atm.di.exports.DatabaseExport
-import atm.di.exports.OutputterExport
-import atm.di.utils.dependent
-import atm.di.utils.perComponent
-
-// can't make it inner interface of UserCommandsRouter: https://youtrack.jetbrains.com/issue/KT-17455/
-interface UserCommandsComponentImport : AccountExport, DatabaseExport {
-    override val account: Database.Account
-}
+import atm.commands.Command.Result
+import atm.commands.SingleArgCommand
+import atm.di.AccountExport
+import atm.di.AmountsExport
+import atm.di.CommandsExport
+import atm.di.CommonCommandsImports
+import atm.di.OutputterExport
+import atm.di.UserCommandsImports
+import atm.di.amountsModule
+import atm.di.getCommonCommandsModule
+import atm.di.getUserCommandsModule
+import atm.di.systemOutModule
+import undagger.BeanHolder
+import undagger.BeanHolder.Companion.plus
+import undagger.perComponent
 
 interface UserCommandsComponent {
     val router: CommandRouter
 }
 
-fun userCommandsComponent(import: UserCommandsComponentImport): UserCommandsComponent = object :
+fun userCommandsComponent(import: AccountExport): UserCommandsComponent = object :
     UserCommandsComponent,
-    UserCommandsComponentImport by import,
-    CommandRouterImport,
-    OutputterExport,
-    LoginCommandImport,
-    UserCommandImport,
-    WithdrawCommandImport,
-    WithdrawalLimiterImport {
+    AccountExport by import,
+    AmountsExport by amountsModule,
+    OutputterExport by systemOutModule,
+    CommandsExport,
+    CommonCommandsImports,
+    UserCommandsImports {
 
     override val router: CommandRouter by perComponent(::CommandRouter)
-    override val withdrawalLimiter: WithdrawalLimiter by perComponent(::WithdrawalLimiter)
-    override val commands: BeanHolder<String, Command> = perComponent(
-        "hello" to ::HelloWorldCommand,
-        "login" to ::LoginCommand,
-        "deposit" to ::DepositCommand,
-        "withdraw" to ::WithdrawCommand,
-        "logout" to dependent(::LogoutCommand),
-    )
 
-    override fun userCommandsComponent(account: Database.Account): UserCommandsComponent =
-        error("No nested logins allowed!")
+    override val withdrawalLimiter: WithdrawalLimiter by perComponent(::WithdrawalLimiter)
+    override val commands: BeanHolder<String, Command> = getCommonCommandsModule().commands +
+        getUserCommandsModule().commands +
+        // User logged in. Don't allow a login command if we already have someone logged in!
+        perComponent(
+            "login" to {
+                object : SingleArgCommand() {
+                    override fun handleArg(arg: String): Result {
+                        val loggedInUser = account.username
+                        val username = arg
+                        outputter.output("$loggedInUser is already logged in")
+                        if (loggedInUser != username) outputter.output("run `logout` first before trying to log in another user")
+                        return Result.handled
+                    }
+                }
+            }
+        )
+
+    override fun userCommandsComponent(username: String): UserCommandsComponent = error("No nested logins allowed!")
 }

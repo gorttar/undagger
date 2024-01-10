@@ -1,7 +1,7 @@
 package atm.commands
 
-import atm.di.exports.OutputterExport
-import atm.di.utils.invoke
+import atm.di.OutputterExport
+import undagger.invoke
 import java.math.BigDecimal
 
 
@@ -16,13 +16,15 @@ abstract class BigDecimalCommand protected constructor(private val import: Outpu
             amount <= BigDecimal.ZERO -> outputter.output("amount must be positive")
             else -> handleAmount(amount)
         }
-        Command.Result.handled()
+        return Command.Result.handled
     }
 
     /** Handles the given (positive) `amount` of money.  */
     protected abstract fun handleAmount(amount: BigDecimal)
 
     companion object {
-        private fun tryParse(arg: String): BigDecimal? = runCatching { BigDecimal(arg) }.getOrNull()
+        private fun tryParse(arg: String): BigDecimal? = runCatching { BigDecimal(arg) }
+            .onFailure { if (it !is NumberFormatException) throw it }
+            .getOrNull()
     }
 }

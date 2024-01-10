@@ -2,34 +2,45 @@ package atm.commands
 
 import atm.CommandRouter
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 
-/** Logic to process some user input.  */
+/** A text-based command handler. */
 interface Command {
-    /** Process the rest of the command's words and do something.  */
+    /**
+     * Processes and optionally acts upon the given [input].
+     *
+     * @return a [Result] indicating how the input was handled
+     */
     fun handleInput(input: List<String>): Result
 
     /**
-     * This wrapper class is introduced to make a future change easier
-     * even though it looks unnecessary right now.
+     * A command result, which has a [Status] and optionally a new [CommandRouter] that
+     * will handle subsequent commands.
      */
     class Result(
-        private val status: Status,
-        private val nestedCommandRouter: Optional<CommandRouter>
+        val status: Status,
+        nestedCommandRouter: Optional<CommandRouter>
     ) {
-        fun status(): Status = status
-
-        fun nestedCommandRouter(): Optional<CommandRouter> = nestedCommandRouter
+        val nestedCommandRouter = nestedCommandRouter.getOrNull()
 
         companion object {
-            fun invalid(): Result = Result(Status.INVALID, Optional.empty())
-            fun handled(): Result = Result(Status.HANDLED, Optional.empty())
+            val invalid: Result = Result(Status.INVALID, Optional.empty())
+            val handled: Result = Result(Status.HANDLED, Optional.empty())
+            val inputCompleted: Result = Result(Status.INPUT_COMPLETED, Optional.empty())
             fun enterNestedCommandSet(nestedCommandRouter: CommandRouter): Result =
                 Result(Status.HANDLED, Optional.of(nestedCommandRouter))
-
-            fun inputCompleted(): Result = Result(Status.INPUT_COMPLETED, Optional.empty())
         }
     }
 
-    enum class Status { INVALID, HANDLED, INPUT_COMPLETED }
+    enum class Status {
+        /** The command or its arguments were invalid. */
+        INVALID,
+
+        /** The command handled the input and no other commands should attempt to handle it. */
+        HANDLED,
+
+        /** The command handled the input and no further inputs should be submitted. */
+        INPUT_COMPLETED
+    }
 }
