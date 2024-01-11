@@ -4,6 +4,7 @@ import atm.commands.Command
 import atm.commands.Command.Result
 import atm.commands.Command.Status
 import atm.di.CommandsExport
+import undagger.BeanHolder.Companion.get
 
 /** Routes individual text commands to the appropriate [Command] (s). */
 class CommandRouter(private val import: CommandsExport) {

@@ -15,7 +15,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test", "1.9.22"))
+    val kotlinVersion = "1.9.22"
+    implementation(kotlin("reflect", kotlinVersion))
+    testImplementation(kotlin("test", kotlinVersion))
     val daggerVersion = "2.50"
     implementation(group = "com.google.dagger", name = "dagger", version = daggerVersion)
     kapt(group = "com.google.dagger", name = "dagger-compiler", version = daggerVersion)
@@ -27,7 +29,10 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "${JavaVersion.VERSION_21}"
+    kotlinOptions {
+        jvmTarget = "${JavaVersion.VERSION_21}"
+        freeCompilerArgs = listOf("-Xjvm-default=all")
+    }
 }
 
 application {
