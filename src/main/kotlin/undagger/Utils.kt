@@ -37,7 +37,7 @@ class BeanHolder<out Key, out Bean> private constructor(
         operator fun <Key, Bean> BeanHolder<Key, Bean>.get(key: Key) = delegates[key]?.invoke()
 
         /**
-         * Checks if [BeanHolder] represented by [this] contains th given [key]
+         * Checks if [BeanHolder] represented by [this] contains the given [key]
          */
         operator fun <Key> BeanHolder<Key, *>.contains(key: Key) = key in delegates
 
@@ -84,8 +84,7 @@ class Delegate<out V> @PublishedApi internal constructor(
 inline operator fun <Import, R> Import.invoke(block: Import.() -> R): R = run(block)
 
 /**
- * Create [new] instance of [Bean] using its [constructor] and [Import]
- * represented by [this]
+ * Create [new] instance of [Bean] using its [constructor] and [Import] represented by [this]
  */
 inline fun <Import, Bean> Import.new(constructor: (Import) -> Bean): Bean = this(constructor)
 
@@ -122,7 +121,8 @@ inline fun <Import, reified Bean> Import.perRequest(noinline constructor: (Impor
 
 /**
  * [perRequest] creates [BeanHolder]<[Key], [Bean]> which values are evaluated by corresponding [Delegate]s.
- * [Delegate]s are created using constructors from [keyToConstructor] and [Import] represented by [this]
+ * [Delegate]s are created using constructors from [keyToConstructor] and [Import]
+ * represented by [this]
  * Created [Delegate]s invokes constructors for each invocation
  */
 inline fun <Import, Key, reified Bean> Import.perRequest(
@@ -132,7 +132,7 @@ inline fun <Import, Key, reified Bean> Import.perRequest(
 
 /**
  * [perComponent] creates [Delegate] for [Bean] using its [constructor] named as [constructorName] and [Import]
- *  * represented by [this]
+ * represented by [this]
  * Created [Delegate] invokes [constructor] once during first invocation
  */
 inline fun <Import, reified Bean> Import.perComponent(
@@ -142,7 +142,7 @@ inline fun <Import, reified Bean> Import.perComponent(
 
 /**
  * [perComponent] creates [Delegate] for [Bean] using its [constructor] and [Import]
- *  * represented by [this]
+ * represented by [this]
  * Created [Delegate] invokes [constructor] once during first invocation
  */
 inline fun <Import, reified Bean> Import.perComponent(noinline constructor: (Import) -> Bean): Delegate<Bean> =
@@ -150,7 +150,8 @@ inline fun <Import, reified Bean> Import.perComponent(noinline constructor: (Imp
 
 /**
  * [perComponent] creates [BeanHolder]<[Key], [Bean]> which values are evaluated by corresponding [Delegate]s.
- * [Delegate]s are created using constructors from [keyToConstructor] and [Import] represented by [this]
+ * [Delegate]s are created using constructors from [keyToConstructor] and [Import]
+ * represented by [this]
  * Created [Delegate]s invokes constructors once during first invocation
  */
 inline fun <Import, Key, reified Bean> Import.perComponent(
