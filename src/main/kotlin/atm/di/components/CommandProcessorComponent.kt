@@ -10,8 +10,8 @@ import atm.di.DatabaseExport
 import atm.di.OutputterExport
 import atm.di.UserCommandsComponentExport
 import atm.di.accountModule
+import atm.di.commonCommandsModule
 import atm.di.databaseModule
-import atm.di.getCommonCommandsModule
 import atm.di.systemOutModule
 import undagger.BeanHolder
 import undagger.new
@@ -21,19 +21,23 @@ interface CommandProcessorComponent {
     val processor: CommandProcessor
 }
 
-val commandProcessorComponent: CommandProcessorComponent = object :
+fun commandProcessorComponent(): CommandProcessorComponent = object :
     CommandProcessorComponent,
-    DatabaseExport by databaseModule,
-    OutputterExport by systemOutModule,
+    DatabaseExport by databaseModule(),
+    OutputterExport by systemOutModule(),
     CommandsExport,
     CommonCommandsImports,
     CommandProcessorImport,
     UserCommandsComponentExport {
 
+    /**
+     * [processor] is [perComponent] scoped to [commandProcessorComponent]
+     * because it maintains inter-command state and should be shared among all users
+     */
     override val processor: CommandProcessor by perComponent(::CommandProcessor)
 
     override val firstCommandRouter: CommandRouter by perComponent(::CommandRouter)
-    override val commands: BeanHolder<String, Command> = getCommonCommandsModule().commands
+    override val commands: BeanHolder<String, Command> = commonCommandsModule().commands
     override fun userCommandsComponent(username: String): UserCommandsComponent =
         accountModule(username).new(::userCommandsComponent)
 }

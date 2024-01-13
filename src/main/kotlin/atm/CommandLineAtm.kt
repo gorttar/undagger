@@ -5,7 +5,8 @@ import java.util.Scanner
 
 /** Entry point for the command-line ATM. */
 fun main() {
-    val scanner = Scanner(System.`in`)
-    val commandProcessor = commandProcessorComponent.processor
-    while (scanner.hasNextLine()) commandProcessor.process(scanner.nextLine())
+    val processor = commandProcessorComponent().processor
+    Scanner(System.`in`)
+        .run { generateSequence { if (hasNextLine()) nextLine() else null } }
+        .forEach(processor::process)
 }
