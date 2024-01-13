@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     val kotlinVersion = "1.9.22"
     kotlin("jvm") version kotlinVersion
-    kotlin("kapt") version kotlinVersion
     application
 }
 
@@ -18,10 +17,6 @@ dependencies {
     val kotlinVersion = "1.9.22"
     implementation(kotlin("reflect", kotlinVersion))
     testImplementation(kotlin("test", kotlinVersion))
-    val daggerVersion = "2.50"
-    implementation(group = "com.google.dagger", name = "dagger", version = daggerVersion)
-    kapt(group = "com.google.dagger", name = "dagger-compiler", version = daggerVersion)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 }
 
 tasks.test {
