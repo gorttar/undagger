@@ -24,5 +24,5 @@ import javax.inject.Singleton
     ]
 )
 interface CommandProcessorComponent {
-    val commandProcessor: CommandProcessor
+    val processor: CommandProcessor
 }
