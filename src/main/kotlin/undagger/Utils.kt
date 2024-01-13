@@ -78,15 +78,9 @@ class Delegate<out V> @PublishedApi internal constructor(
 }
 
 /**
- * [invoke] operator for [Import] represented by [this] on [block]
- * effectively applying [block] to [this] evaluating it to [R]
- */
-inline operator fun <Import, R> Import.invoke(block: Import.() -> R): R = run(block)
-
-/**
  * Create [new] instance of [Bean] using its [constructor] and [Import] represented by [this]
  */
-inline fun <Import, Bean> Import.new(constructor: (Import) -> Bean): Bean = this(constructor)
+inline fun <Import, Bean> Import.new(constructor: (Import) -> Bean): Bean = let(constructor)
 
 /**
  * Make [constructor] for [Bean] named as [constructorName] formally [dependent] from [Import]
