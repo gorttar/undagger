@@ -12,6 +12,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -27,7 +28,10 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "${JavaVersion.VERSION_21}"
+    kotlinOptions {
+        jvmTarget = "${JavaVersion.VERSION_21}"
+        freeCompilerArgs = listOf("-Xjvm-default=all")
+    }
 }
 
 application {
