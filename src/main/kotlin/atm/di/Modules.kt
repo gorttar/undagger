@@ -11,6 +11,7 @@ import atm.data.Database
 import atm.data.Database.Account
 import atm.io.Outputter
 import undagger.BeanHolder
+import undagger.BeanHolder.Companion.plus
 import undagger.dependent
 import undagger.perComponent
 import undagger.perRequest
@@ -44,11 +45,16 @@ fun systemOutModule(): OutputterExport = object : OutputterExport {
 }
 
 /** Commands that are only applicable when a user is logged in. */
-fun UserCommandsImports.userCommandsModule(): CommandsExport = object : CommandsExport {
-    override val commands: BeanHolder<String, Command> = perRequest(
+fun UserCommandsImports.userCommandsModule(): CommandsExport = object :
+    CommandsExport,
+    OutputterExport by systemOutModule(),
+    CommonCommandsImports {
+    override val commands: BeanHolder<String, Command> = commonCommandsModule().commands + perRequest(
         "deposit" to ::DepositCommand,
         "withdraw" to ::WithdrawCommand,
         "logout" to ::LogoutCommand,
         "login" to ::NestedLoginCommand
     )
+
+    override fun userCommandsComponent(username: String): Nothing = error("No nested logins allowed!")
 }
